@@ -3,23 +3,19 @@
     let col = 10;
 
     let table = {
-        count: str,
+        countStr: str,
+        countCol: col,
         data: []
     };
 
     for (let i = 0; i < str; i++) {
         table.data[i] = {
             id: i,
-            name: 'ФИО',
+            name: 'Иванов Иван Иванович',
             facts: {}
         };
         for (let j = 1; j <= col; j++) {
-            let fieldName = 'Field_' + j;
-            let fieldContent = 'Значение ' + i + '.' + j;
-
-            Object.defineProperty(table.data[i].facts, fieldName, {
-                value: fieldContent
-            });
+            table.data[i].facts['Fact_' + j] = 'Значение ' + (i + 1) + '.' + j;
         }
     }
 
