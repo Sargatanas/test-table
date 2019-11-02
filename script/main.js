@@ -5,7 +5,7 @@ function loadTable() {
     let size = document.getElementById('size').value;
 
     // Пагинация
-    createPages(people.countStr, size);
+    createPages(people, size);
     let currentPage = 1;
 
     // Вывод таблицы
@@ -13,8 +13,8 @@ function loadTable() {
 }
 
 // Вывод пагинации
-function createPages(total, size) {
-    let countPage = Math.ceil(total / size);
+function createPages(dataArray, size) {
+    let countPage = Math.ceil(dataArray.countStr / size);
 
     let pages = document.getElementById('pages');
     pages.innerHTML = '';
@@ -29,15 +29,21 @@ function createPages(total, size) {
 
         pages.appendChild(optionPage);
     }
+
+    pages.addEventListener('change', function () {
+        constructTable(dataArray, pages.value, size);
+    });
 }
 
 // Отрисовка таблицы
 function constructTable(dataArray, currentPage, size) {
     let table = document.getElementById('table');
+    table.innerText = '';
 
+    let totalStringNum = dataArray.countStr;
     let firstStringNum = size * (currentPage - 1);
     let lastStringNum = size * currentPage;
-    let totalStringNum = dataArray.countStr;
+    lastStringNum = Math.min(lastStringNum, totalStringNum);
 
     // Отображение шапки таблицы
     let str = document.createElement('tr');
@@ -52,14 +58,12 @@ function constructTable(dataArray, currentPage, size) {
     for (let i = firstStringNum; i < lastStringNum; i++) {
 
         str = document.createElement('tr');
-        if (i <= totalStringNum) {
-            for (let j = 0; j <= dataArray.countCol; j++) {
-                let col = document.createElement('td');
-                col.innerText = j === 0 ?
-                    dataArray.data[i].name :
-                    dataArray.data[i].facts['Fact_' + j];
-                str.appendChild(col);
-            }
+        for (let j = 0; j <= dataArray.countCol; j++) {
+            let col = document.createElement('td');
+            col.innerText = j === 0 ?
+                dataArray.data[i].name :
+                dataArray.data[i].facts['Fact_' + j];
+            str.appendChild(col);
         }
         table.appendChild(str);
     }
