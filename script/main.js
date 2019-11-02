@@ -1,16 +1,22 @@
-function loadTable() {
+(function loadTable() {
     let people = JSON.parse(localStorage.getItem('data'));
 
     // Количество записей на странице
-    let size = document.getElementById('size').value;
+    let size = document.getElementById('size');
+
+    size.addEventListener('change', function () {
+        size = document.getElementById('size');
+        constructTable(people, 1, size.value);
+        createPages(people, size.value);
+    });
 
     // Пагинация
-    createPages(people, size);
+    createPages(people, size.value);
     let currentPage = 1;
 
     // Вывод таблицы
-    constructTable(people, currentPage, size);
-}
+    constructTable(people, currentPage, size.value);
+})();
 
 // Вывод пагинации
 function createPages(dataArray, size) {
