@@ -8,9 +8,10 @@
 
 <main>
     <form>
-        <label for="size">
+        <label for="v-size">
             Отображать на странице по
-            <select id="size" name="size">
+            <select id="v-size"
+                    name="v-size">
                 <option value="10"
                         selected>
                     10
@@ -21,20 +22,44 @@
             </select>
             записей
         </label>
+
+        <br>
+
+        <label for="h-size">
+            Отображать на странице по
+            <select id="h-size"
+                    name="h-size">
+                <option value="5"
+                        selected>
+                    5
+                </option>
+                <option value="10">
+                    10
+                </option>
+            </select>
+            колонок
+        </label>
     </form>
 
-    <table id="table"></table>
+    <br>
+
+    <table id="table"
+           border="1"
+           cellspacing="0"></table>
+
+    <br>
 
     <form>
         <label for="pages">
             Страница:
         </label>
-        <select id="pages" name="pages"></select>
+        <select id="pages"
+                name="pages"></select>
     </form>
 </main>
 
 
-<script type="text/javascript" src="script/jsonGenerator.js"></script>
-<script type="text/javascript" src="script/main.js"></script>
+<script type="text/javascript" src="js/jsonGenerator.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>
