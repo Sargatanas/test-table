@@ -70,12 +70,38 @@ function constructTable(dataArray, currentPage, vSize, hSize) {
     col.innerText = 'ФИО';
     str.appendChild(col);
 
+    // Добавление кнопки прокрутки столбцов назад
+    col = document.createElement('th');
+    col.rowSpan = vSize + 1;
+
+    let colButton  = document.createElement('button');
+    colButton.innerText = '<';
+    colButton.addEventListener('click', function () {
+        console.log('<');
+    });
+    col.appendChild(colButton);
+
+    str.appendChild(col);
+
     for (let i = firstColumnNum; i <= lastColumnNum; i++) {
         col = document.createElement('th');
         col.innerText = 'Поле ' + i;
         str.appendChild(col);
     }
     table.appendChild(str);
+
+    // Добавление кнопки прокрутки столбцов вперед
+    col = document.createElement('th');
+    col.rowSpan = vSize + 1;
+
+    colButton  = document.createElement('button');
+    colButton.innerText = '>';
+    colButton.addEventListener('click', function () {
+        console.log('>');
+    });
+    col.appendChild(colButton);
+
+    str.appendChild(col);
 
     // Отображение контента
     for (let i = firstStringNum; i < lastStringNum; i++) {
@@ -94,3 +120,4 @@ function constructTable(dataArray, currentPage, vSize, hSize) {
         table.appendChild(str);
     }
 }
+
