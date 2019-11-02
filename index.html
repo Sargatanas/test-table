@@ -7,8 +7,28 @@
 <body>
 
 <main>
+    <form onsubmit="loadTable(); return false">
+        <label for="size">
+            Отображать на странице по
+        </label>
+        <select id="size" name="size">
+            <option value="10">
+                10
+            </option>
+            <option value="15">
+                15
+            </option>
+        </select>
+
+        <input type="submit" value="Отобразить">
     </form>
     <table id="table"></table>
+    <form>
+        <label for="pages">
+            Страница:
+        </label>
+        <select id="pages" name="pages"></select>
+    </form>
 </main>
 
 
