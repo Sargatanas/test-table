@@ -6,7 +6,7 @@
     let hSize = document.getElementById('h-size');
 
     // Первичный вывод таблицы
-    createPages(people, vSize.value);
+    createPages(people, vSize.value, hSize.value);
     constructTable(people, 1, vSize.value, hSize.value, 0);
 
     // Обновление таблицы
