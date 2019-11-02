@@ -7,22 +7,23 @@
 
     // Первичный вывод таблицы
     createPages(people, vSize.value);
-    constructTable(people, 1, vSize.value, hSize.value);
+    constructTable(people, 1, vSize.value, hSize.value, 0);
 
     // Обновление таблицы
     vSize.addEventListener('change', function () {
         vSize = document.getElementById('v-size');
 
-        constructTable(people, 1, vSize.value, hSize.value);
+        constructTable(people, 1, vSize.value, hSize.value, 0);
         createPages(people, vSize.value, hSize.value);
     });
     hSize.addEventListener('change', function () {
         hSize = document.getElementById('h-size');
 
-        constructTable(people, 1, vSize.value, hSize.value);
+        constructTable(people, 1, vSize.value, hSize.value, 0);
         createPages(people, vSize.value, hSize.value);
     });
 })();
+
 
 // Вывод пагинации
 function createPages(dataArray, vSize, hSize) {
@@ -43,26 +44,31 @@ function createPages(dataArray, vSize, hSize) {
     }
 
     pages.addEventListener('change', function () {
-        constructTable(dataArray, pages.value, vSize, hSize);
+        constructTable(dataArray, pages.value, vSize, hSize, 0);
     });
 }
 
+
 // Отрисовка таблицы
-function constructTable(dataArray, currentPage, vSize, hSize) {
+function constructTable(dataArray, currentPage, vSize, hSize, hShift) {
     let table = document.getElementById('table');
     table.innerText = '';
+
+    // Рассчет границ вывода
+    vSize = Number(vSize);
+    hSize = Number(hSize);
+    hShift = Number(hShift);
 
     let totalStringNum = dataArray.countStr;
     let firstStringNum = vSize * (currentPage - 1);
     let lastStringNum = vSize * currentPage;
     lastStringNum = Math.min(lastStringNum, totalStringNum);
 
-    let currentCol = 1;
     let totalColumnNum = dataArray.countCol;
-    let firstColumnNum = hSize * (currentCol - 1) + 1;
-    let lastColumnNum = hSize * currentCol;
-    lastColumnNum = Math.min(lastColumnNum, totalColumnNum);
 
+    let firstColumnNum = hShift + 1;
+    let lastColumnNum = firstColumnNum + hSize - 1;
+    lastColumnNum = Math.min(lastColumnNum, totalColumnNum);
 
     // Отображение шапки таблицы
     let str = document.createElement('tr');
@@ -77,7 +83,9 @@ function constructTable(dataArray, currentPage, vSize, hSize) {
     let colButton  = document.createElement('button');
     colButton.innerText = '<';
     colButton.addEventListener('click', function () {
-        console.log('<');
+        if ( hShift !== Math.max(0, hShift - 1)) {
+            constructTable(dataArray, currentPage, vSize, hSize, hShift - 1);
+        }
     });
     col.appendChild(colButton);
 
@@ -97,7 +105,9 @@ function constructTable(dataArray, currentPage, vSize, hSize) {
     colButton  = document.createElement('button');
     colButton.innerText = '>';
     colButton.addEventListener('click', function () {
-        console.log('>');
+        if ( hShift !== Math.min(hShift + 1, totalColumnNum - hSize)) {
+            constructTable(dataArray, currentPage, vSize, hSize, hShift + 1);
+        }
     });
     col.appendChild(colButton);
 
@@ -120,4 +130,3 @@ function constructTable(dataArray, currentPage, vSize, hSize) {
         table.appendChild(str);
     }
 }
-
