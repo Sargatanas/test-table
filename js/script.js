@@ -1,33 +1,36 @@
 (function loadTable() {
-    let people = JSON.parse(localStorage.getItem('data'));
-
-    // Количество записей на странице
-    let vSize = document.getElementById('v-size');
-    let hSize = document.getElementById('h-size');
+    // Начальные данные
+    let config = {
+        array: JSON.parse(localStorage.getItem('data')),
+        page: 1,
+        width: Number(document.getElementById('h-size').value),
+        height: Number(document.getElementById('v-size').value),
+        getShift: 0
+    };
 
     // Первичный вывод таблицы
-    createPages(people, vSize.value, hSize.value);
-    constructTable(people, 1, vSize.value, hSize.value, 0);
+    createPages(config);
+    constructTable(config);
 
     // Обновление таблицы
-    vSize.addEventListener('change', function () {
-        vSize = document.getElementById('v-size');
-
-        constructTable(people, 1, vSize.value, hSize.value, 0);
-        createPages(people, vSize.value, hSize.value);
+    document.getElementById('v-size').addEventListener('change', function () {
+        config.height = Number(document.getElementById('v-size').value);
+        config.page = 1;
+        createPages(config);
+        constructTable(config);
     });
-    hSize.addEventListener('change', function () {
-        hSize = document.getElementById('h-size');
 
-        constructTable(people, 1, vSize.value, hSize.value, 0);
-        createPages(people, vSize.value, hSize.value);
+    document.getElementById('h-size').addEventListener('change', function () {
+        config.width = Number(document.getElementById('h-size').value);
+        config.getShift = 0;
+        constructTable(config);
     });
 })();
 
 
 // Вывод пагинации
-function createPages(dataArray, vSize, hSize) {
-    let countPage = Math.ceil(dataArray.countStr / vSize);
+function createPages(config) {
+    let countPage = Math.ceil(config.array.countStr / config.height);
 
     let pages = document.getElementById('pages');
     pages.innerHTML = '';
@@ -44,89 +47,114 @@ function createPages(dataArray, vSize, hSize) {
     }
 
     pages.addEventListener('change', function () {
-        constructTable(dataArray, pages.value, vSize, hSize, 0);
+        config.page = Number(pages.value);
+        constructTable(config);
     });
 }
 
-
 // Отрисовка таблицы
-function constructTable(dataArray, currentPage, vSize, hSize, hShift) {
+function constructTable(config) {
     let table = document.getElementById('table');
     table.innerText = '';
 
-    // Рассчет границ вывода
-    vSize = Number(vSize);
-    hSize = Number(hSize);
-    hShift = Number(hShift);
+    // Расчет границ по высоте
+    let firstStringNum = config.height * (config.page - 1);
+    let lastStringNum = config.height * config.page;
+    lastStringNum = Math.min(lastStringNum, config.array.countStr);
+    config['strStart'] = firstStringNum;
+    config['strEnd'] = lastStringNum;
 
-    let totalStringNum = dataArray.countStr;
-    let firstStringNum = vSize * (currentPage - 1);
-    let lastStringNum = vSize * currentPage;
-    lastStringNum = Math.min(lastStringNum, totalStringNum);
+    // расчет границ по ширине
+    let firstColumnNum = config.getShift + 1;
+    let lastColumnNum = firstColumnNum + config.width - 1;
+    lastColumnNum = Math.min(lastColumnNum, config.array.countCol);
+    config['colStart'] = firstColumnNum;
+    config['colEnd'] = lastColumnNum;
 
-    let totalColumnNum = dataArray.countCol;
+    table.appendChild(constructTableHeader(config));
 
-    let firstColumnNum = hShift + 1;
-    let lastColumnNum = firstColumnNum + hSize - 1;
-    lastColumnNum = Math.min(lastColumnNum, totalColumnNum);
+    constructTableBody(config).forEach(function(tableRow) {
+        table.appendChild(tableRow);
+    });
 
-    // Отображение шапки таблицы
-    let str = document.createElement('tr');
+}
+
+// Отрисовка шапки таблицы
+function constructTableHeader(config) {
+    let row = document.createElement('tr');
     let col = document.createElement('th');
     col.innerText = 'ФИО';
-    str.appendChild(col);
+    row.appendChild(col);
 
-    // Добавление кнопки прокрутки столбцов назад
-    col = document.createElement('th');
-    col.rowSpan = vSize + 1;
+    // Добавление кнопки прокрутки столбцов влево
+    row.appendChild(setButtonLeft(config));
+
+    for (let i = config.colStart; i <= config.colEnd; i++) {
+        col = document.createElement('th');
+        col.innerText = 'Поле ' + i;
+        row.appendChild(col);
+    }
+
+    // Добавление кнопки прокрутки столбцов вперед
+    row.appendChild(setButtonRight(config));
+
+    return row;
+}
+
+// Добавление кнопки прокрутки влево
+function setButtonLeft(config) {
+    let col = document.createElement('th');
+    col.rowSpan = config.height + 1;
 
     let colButton  = document.createElement('button');
     colButton.innerText = '<';
     colButton.addEventListener('click', function () {
-        if ( hShift !== Math.max(0, hShift - 1)) {
-            constructTable(dataArray, currentPage, vSize, hSize, hShift - 1);
+        if ( config.getShift !== Math.max(0, config.getShift - 1)) {
+            config.getShift--;
+            constructTable(config);
         }
     });
     col.appendChild(colButton);
 
-    str.appendChild(col);
+    return col;
+}
 
-    for (let i = firstColumnNum; i <= lastColumnNum; i++) {
-        col = document.createElement('th');
-        col.innerText = 'Поле ' + i;
-        str.appendChild(col);
-    }
-    table.appendChild(str);
+// Добавление кнопки прокрутки вправо
+function setButtonRight(config) {
+    let col = document.createElement('th');
+    col.rowSpan = config.height + 1;
 
-    // Добавление кнопки прокрутки столбцов вперед
-    col = document.createElement('th');
-    col.rowSpan = vSize + 1;
-
-    colButton  = document.createElement('button');
+    let colButton  = document.createElement('button');
     colButton.innerText = '>';
     colButton.addEventListener('click', function () {
-        if ( hShift !== Math.min(hShift + 1, totalColumnNum - hSize)) {
-            constructTable(dataArray, currentPage, vSize, hSize, hShift + 1);
+        if ( config.getShift !== Math.min(config.getShift + 1, config.array.countCol - config.width)) {
+            config.getShift++;
+            constructTable(config);
         }
     });
     col.appendChild(colButton);
 
-    str.appendChild(col);
+    return col;
+}
 
-    // Отображение контента
-    for (let i = firstStringNum; i < lastStringNum; i++) {
+// Отрисовка контента таблицы
+function constructTableBody(config) {
+    let body = [];
 
-        str = document.createElement('tr');
+    for (let i = config.strStart; i < config.strEnd; i++) {
+        let row = document.createElement('tr');
 
         let col = document.createElement('td');
-        col.innerText = dataArray.data[i].name;
-        str.appendChild(col);
+        col.innerText = config.array.data[i].name;
+        row.appendChild(col);
 
-        for (let j = firstColumnNum; j <= lastColumnNum; j++) {
+        for (let j = config.colStart; j <= config.colEnd; j++) {
             col = document.createElement('td');
-            col.innerText = dataArray.data[i].facts['Fact_' + j];
-            str.appendChild(col);
+            col.innerText = config.array.data[i].facts['Fact_' + j];
+            row.appendChild(col);
         }
-        table.appendChild(str);
+        body.push(row);
     }
+
+    return body;
 }

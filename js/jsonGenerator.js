@@ -1,6 +1,6 @@
 (function jsonGenerator () {
     let str = 100;
-    let col = 10;
+    let col = 20;
 
     let table = {
         countStr: str,
