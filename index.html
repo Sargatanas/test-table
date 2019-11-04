@@ -3,37 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
-<body>
 
-<main>
-    <form>
-        <label for="v-size">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body">
+
+<main class="table">
+    <form class="table-header">
+        <label class="table-header-element__label"
+               for="v-size">
             Отображать на странице по
-            <select id="v-size"
+            <select class="table-header-element"
+                    id="v-size"
                     name="v-size">
-                <option value="10"
+                <option class="table-header-element__option"
+                        value="10"
                         selected>
                     10
                 </option>
-                <option value="15">
+                <option class="table-header-element__option"
+                        value="15">
                     15
                 </option>
             </select>
             записей
         </label>
 
-        <br>
-
-        <label for="h-size">
+        <label class="table-header-element__label"
+               for="h-size">
             Отображать на странице по
-            <select id="h-size"
+            <select class="table-header-element"
+                    id="h-size"
                     name="h-size">
-                <option value="5"
+                <option class="table-header-element__option"
+                        value="5"
                         selected>
                     5
                 </option>
-                <option value="10">
+                <option class="table-header-element__option"
+                        value="10">
                     10
                 </option>
             </select>
@@ -41,15 +49,12 @@
         </label>
     </form>
 
-    <br>
+    <div class="table-main">
+        <table class="table-main-content"
+               id="table"></table>
+    </div>
 
-    <table id="table"
-           border="1"
-           cellspacing="0"></table>
-
-    <br>
-
-    <form>
+    <form class="table-footer">
         <label for="pages">
             Страница:
         </label>

@@ -82,17 +82,27 @@ function constructTable(config) {
 // Отрисовка шапки таблицы
 function constructTableHeader(config) {
     let row = document.createElement('tr');
-    let col = document.createElement('th');
-    col.innerText = 'ФИО';
-    row.appendChild(col);
+    row.classList.add('table-main-content__row');
+    row.classList.add('table-main-content__row_header');
+
+    let cell = document.createElement('th');
+    cell.innerText = 'ФИО';
+    cell.classList.add('table-main-content__cell');
+    cell.classList.add('table-main-content__cell_header');
+    cell.classList.add('table-main-content__cell_name');
+
+    row.appendChild(cell);
 
     // Добавление кнопки прокрутки столбцов влево
     row.appendChild(setButtonLeft(config));
 
     for (let i = config.colStart; i <= config.colEnd; i++) {
-        col = document.createElement('th');
-        col.innerText = 'Поле ' + i;
-        row.appendChild(col);
+        cell = document.createElement('th');
+        cell.innerText = 'Поле ' + i;
+        cell.classList.add('table-main-content__cell');
+        cell.classList.add('table-main-content__cell_header');
+
+        row.appendChild(cell);
     }
 
     // Добавление кнопки прокрутки столбцов вперед
@@ -103,38 +113,46 @@ function constructTableHeader(config) {
 
 // Добавление кнопки прокрутки влево
 function setButtonLeft(config) {
-    let col = document.createElement('th');
-    col.rowSpan = config.height + 1;
+    let cell = document.createElement('th');
+    cell.rowSpan = config.height + 1;
+    cell.classList.add('table-main-content__cell');
+    cell.classList.add('table-main-content__cell_button');
 
-    let colButton  = document.createElement('button');
-    colButton.innerText = '<';
-    colButton.addEventListener('click', function () {
+    let cellButton  = document.createElement('button');
+    cellButton.classList.add('table-main-content__button');
+    cellButton.classList.add('table-main-content__button_left');
+
+    cellButton.addEventListener('click', function () {
         if ( config.getShift !== Math.max(0, config.getShift - 1)) {
             config.getShift--;
             constructTable(config);
         }
     });
-    col.appendChild(colButton);
+    cell.appendChild(cellButton);
 
-    return col;
+    return cell;
 }
 
 // Добавление кнопки прокрутки вправо
 function setButtonRight(config) {
-    let col = document.createElement('th');
-    col.rowSpan = config.height + 1;
+    let cell = document.createElement('th');
+    cell.rowSpan = config.height + 1;
+    cell.classList.add('table-main-content__cell');
+    cell.classList.add('table-main-content__cell_button');
 
-    let colButton  = document.createElement('button');
-    colButton.innerText = '>';
-    colButton.addEventListener('click', function () {
+    let cellButton  = document.createElement('button');
+    cellButton.classList.add('table-main-content__button');
+    cellButton.classList.add('table-main-content__button_right');
+
+    cellButton.addEventListener('click', function () {
         if ( config.getShift !== Math.min(config.getShift + 1, config.array.countCol - config.width)) {
             config.getShift++;
             constructTable(config);
         }
     });
-    col.appendChild(colButton);
+    cell.appendChild(cellButton);
 
-    return col;
+    return cell;
 }
 
 // Отрисовка контента таблицы
@@ -143,15 +161,21 @@ function constructTableBody(config) {
 
     for (let i = config.strStart; i < config.strEnd; i++) {
         let row = document.createElement('tr');
+        row.classList.add('table-main-content__row');
 
-        let col = document.createElement('td');
-        col.innerText = config.array.data[i].name;
-        row.appendChild(col);
+        let cell = document.createElement('td');
+        cell.innerText = config.array.data[i].name;
+        cell.classList.add('table-main-content__cell');
+        cell.classList.add('table-main-content__cell_name');
+
+        row.appendChild(cell);
 
         for (let j = config.colStart; j <= config.colEnd; j++) {
-            col = document.createElement('td');
-            col.innerText = config.array.data[i].facts['Fact_' + j];
-            row.appendChild(col);
+            cell = document.createElement('td');
+            cell.innerText = config.array.data[i].facts['Fact_' + j];
+            cell.classList.add('table-main-content__cell');
+
+            row.appendChild(cell);
         }
         body.push(row);
     }

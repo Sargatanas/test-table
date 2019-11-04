@@ -1,0 +1,148 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+button:active, button:focus {
+    outline: none;
+}
+button::-moz-focus-inner {
+    border: 0;
+}
+
+
+.table {
+    margin: auto;
+    font-family: Arial, serif;
+    font-size: 0.8em;
+}
+
+.table-header {
+    box-sizing: border-box;
+    padding: 20px;
+    background: rgb(236, 236, 236);
+}
+
+.table-header-element__label {
+    display: block;
+    margin-bottom: 10px;
+}
+.table-header-element__label:last-child {
+    margin-bottom: 0;
+}
+
+
+/*Main*/
+
+.table-main {
+    margin: 20px 5px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 5px;
+
+    text-align: center;
+}
+
+.table-main-content {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.table-main-content__row:not(.table-main-content__row_header):hover {
+    background: rgba(255, 234, 194, 0.4);
+    cursor: pointer;
+}
+
+
+.table-main-content__cell {
+    padding: 3px 3px 3px 10px;
+}
+.table-main-content__cell:last-child {
+    border-radius: 0 7px 7px 0;
+}
+.table-main-content__row:nth-child(2n + 3) .table-main-content__cell {
+    background: rgba(204, 204, 204, 0.4);
+}
+.table-main-content__cell:nth-child(2n + 2):not(.table-main-content__cell_header):not(.table-main-content__cell_button) {
+    background: rgba(204, 204, 204, 0.1);
+}
+.table-main-content__row:nth-child(2n + 3) .table-main-content__cell:nth-child(2n + 2) {
+    background: rgba(204, 204, 204, 0.6);
+}
+.table-main-content__cell_header {
+    color: #b96c04;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    border-radius: 7px 7px 0 0;
+}
+.table-main-content__cell_header:nth-child(2n + 1) {
+    background: #ffeac2;
+}
+.table-main-content__cell_name {
+    width: 200px;
+    padding-right: 10px;
+    border-radius: 7px 0 0 7px;
+}
+.table-main-content__cell_name.table-main-content__cell_header {
+    border-radius: 7px 7px 0 0;
+}
+.table-main-content__cell_name:nth-child(2n + 1):not(.table-main-content__cell_header) {
+    text-align: right;
+}
+.table-main-content__row:nth-child(2n + 3) .table-main-content__cell:nth-child(2n + 1).table-main-content__cell_name:nth-child(2n + 1) {
+    background: rgba(204, 204, 204, 0.4);
+}
+.table-main-content__cell_button {
+    height: 100%;
+    padding: 0;
+    background: none;
+}
+
+
+.table-main-content__button {
+    width: 30px;
+    height: 350px;
+    box-sizing: border-box;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 5px;
+
+    background: rgba(185, 108, 4, 0.07) no-repeat center;
+    background-size: 60% auto;
+
+    transition-property: background;
+    transition-duration: 0.3s;
+}
+.table-main-content__button:hover {
+    background-color: rgba(185, 108, 4, 0.2);
+    cursor: pointer;
+}
+.table-main-content__button_left {
+    background-image: url('../resources/img/double-left.png');
+}
+.table-main-content__button_right {
+    background-image: url('../resources/img/double-right.png');
+}
+
+
+/*Footer*/
+
+.table-footer {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 20px;
+
+    background: rgb(236, 236, 236);
+}
+
+.table-header-element__label {
+    display: block;
+    margin-bottom: 10px;
+}
+.table-header-element__label:last-child {
+    margin-bottom: 0;
+}
