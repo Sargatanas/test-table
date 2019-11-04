@@ -1,5 +1,5 @@
 function jsonGenerator () {
-    let str = 100;
+    let str = 30;
     let col = 20;
 
     let names = ['Иван', 'Федор', 'Михаил', 'Алексей', 'Дмитрий', 'Пётр', 'Александр'];

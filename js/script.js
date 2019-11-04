@@ -32,7 +32,7 @@ function constructTable(config) {
 
     // Расчет границ по высоте
     let firstStringNum = config.shiftY;
-    let lastStringNum = firstStringNum + config.height - 1;
+    let lastStringNum = firstStringNum + config.height;
     lastStringNum = Math.min(lastStringNum, config.array.countStr);
     config['strStart'] = firstStringNum;
     config['strEnd'] = lastStringNum;
@@ -134,6 +134,7 @@ function setButtonRight(config) {
 // Добавление кнопки прокрутки вверх
 function setButtonTop(config) {
     let row = document.createElement('tr');
+    row.id = 'tableRow_first';
 
     let cell = document.createElement('td');
     row.appendChild(cell);
@@ -151,8 +152,7 @@ function setButtonTop(config) {
 
     cellButton.addEventListener('click', function () {
         if ( config.shiftY !== Math.max(0, config.shiftY - 1)) {
-            config.shiftY--;
-            constructTable(config);
+            scrollTableUp(config);
         }
     });
     cell.appendChild(cellButton);
@@ -167,6 +167,7 @@ function setButtonTop(config) {
 // Добавление кнопки прокрутки вниз
 function setButtonBottom(config) {
     let row = document.createElement('tr');
+    row.id = 'tableRow_last';
 
     let cell = document.createElement('td');
     row.appendChild(cell);
@@ -182,15 +183,14 @@ function setButtonBottom(config) {
 
     cellButton.addEventListener('click', function () {
         if ( config.shiftY !== Math.min(config.shiftY + 1, config.array.countStr - config.height)) {
-            config.shiftY++;
-            constructTable(config);
+            config = scrollTableDown(config);
         }
     });
     cell.appendChild(cellButton);
     row.appendChild(cell);
 
     cell = document.createElement('td');
-    row.appendChild(cell);
+    row.append(cell);
 
     return row;
 }
@@ -202,6 +202,7 @@ function constructTableBody(config) {
     for (let i = config.strStart; i < config.strEnd; i++) {
         let row = document.createElement('tr');
         row.classList.add('table-main-content__row');
+        row.id = 'tableRow_' + String(i);
 
         let cell = document.createElement('td');
         cell.innerText = config.array.data[i].name;
@@ -222,4 +223,47 @@ function constructTableBody(config) {
     }
 
     return body;
+}
+
+function createRow(config, num) {
+    let row = document.createElement('tr');
+    row.classList.add('table-main-content__row');
+    row.id = 'tableRow_' + String(num);
+
+    let cell = document.createElement('td');
+    cell.innerText = config.array.data[num].name;
+    cell.classList.add('table-main-content__cell');
+    cell.classList.add('table-main-content__cell_name');
+
+    row.appendChild(cell);
+
+    for (let j = config.colStart; j <= config.colEnd; j++) {
+        cell = document.createElement('td');
+        cell.innerText = config.array.data[num].facts['Fact_' + j];
+        cell.classList.add('table-main-content__cell');
+
+        row.append(cell);
+    }
+
+    return row;
+}
+
+function scrollTableDown(config) {
+    document.getElementById('tableRow_' + String(config.shiftY)).remove();
+
+    config.shiftY++;
+    let row = createRow(config, config.strEnd + config.shiftY - 1);
+    document.getElementById('tableRow_last').before(row);
+
+    return config;
+}
+
+function scrollTableUp(config) {
+    document.getElementById('tableRow_' + String(config.strEnd + config.shiftY - 1)).remove();
+
+    config.shiftY--;
+    let row = createRow(config, config.shiftY);
+    document.getElementById('tableRow_first').after(row);
+
+    return config;
 }
