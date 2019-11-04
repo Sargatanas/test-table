@@ -102,8 +102,6 @@ button::-moz-focus-inner {
 
 
 .table-main-content__button {
-    width: 30px;
-    height: 200px;
     box-sizing: border-box;
 
     padding: 0;
@@ -112,7 +110,6 @@ button::-moz-focus-inner {
     border-radius: 5px;
 
     background: rgba(185, 108, 4, 0) no-repeat center;
-    background-size: 60% auto;
 
     transition-property: background;
     transition-duration: 0.3s;
@@ -121,11 +118,29 @@ button::-moz-focus-inner {
     background-color: rgba(185, 108, 4, 0.1);
     cursor: pointer;
 }
+.table-main-content__button_left,
+.table-main-content__button_right {
+    width: 30px;
+    height: 200px;
+    background-size: 60% auto;
+}
 .table-main-content__button_left {
     background-image: url('../resources/img/double-left.png');
 }
 .table-main-content__button_right {
     background-image: url('../resources/img/double-right.png');
+}
+.table-main-content__button_top,
+.table-main-content__button_bottom {
+    width: 200px;
+    height: 30px;
+    background-size: auto 60%;
+}
+.table-main-content__button_top {
+    background-image: url('../resources/img/double-top.png');
+}
+.table-main-content__button_bottom {
+    background-image: url('../resources/img/double-bottom.png');
 }
 
 
