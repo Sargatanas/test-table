@@ -14,13 +14,12 @@
     // Обновление таблицы
     document.getElementById('v-size').addEventListener('change', function () {
         config.height = Number(document.getElementById('v-size').value);
-        config.page = 1;
         constructTable(config);
     });
 
     document.getElementById('h-size').addEventListener('change', function () {
         config.width = Number(document.getElementById('h-size').value);
-        config.getShift = 0;
+        config.shiftX = 0;
         constructTable(config);
     });
 })();
@@ -77,6 +76,7 @@ function constructTableHeader(config) {
         cell.innerText = 'Поле ' + i;
         cell.classList.add('table-main-content__cell');
         cell.classList.add('table-main-content__cell_header');
+        cell.id = 'header_' + i;
 
         row.appendChild(cell);
     }
@@ -100,8 +100,7 @@ function setButtonLeft(config) {
 
     cellButton.addEventListener('click', function () {
         if ( config.shiftX !== Math.max(0, config.shiftX - 1)) {
-            config.shiftX--;
-            constructTable(config);
+            config = scrollTableLeft(config);
         }
     });
     cell.appendChild(cellButton);
@@ -122,8 +121,7 @@ function setButtonRight(config) {
 
     cellButton.addEventListener('click', function () {
         if ( config.shiftX !== Math.min(config.shiftX + 1, config.array.countCol - config.width)) {
-            config.shiftX++;
-            constructTable(config);
+            config = scrollTableRight(config);
         }
     });
     cell.appendChild(cellButton);
@@ -152,7 +150,7 @@ function setButtonTop(config) {
 
     cellButton.addEventListener('click', function () {
         if ( config.shiftY !== Math.max(0, config.shiftY - 1)) {
-            scrollTableUp(config);
+            config = scrollTableUp(config);
         }
     });
     cell.appendChild(cellButton);
@@ -212,11 +210,7 @@ function constructTableBody(config) {
         row.appendChild(cell);
 
         for (let j = config.colStart; j <= config.colEnd; j++) {
-            cell = document.createElement('td');
-            cell.innerText = config.array.data[i].facts['Fact_' + j];
-            cell.classList.add('table-main-content__cell');
-
-            row.appendChild(cell);
+            row.append(createCell(config, i, j));
         }
 
         body.push(row);
@@ -237,23 +231,38 @@ function createRow(config, num) {
 
     row.appendChild(cell);
 
-    for (let j = config.colStart; j <= config.colEnd; j++) {
-        cell = document.createElement('td');
-        cell.innerText = config.array.data[num].facts['Fact_' + j];
-        cell.classList.add('table-main-content__cell');
 
-        row.append(cell);
+    for (let j = config.colStart + config.shiftX; j <= config.colEnd + config.shiftX; j++) {
+       row.append(createCell(config, num, j));
     }
 
     return row;
 }
 
+function createHeaderCell(config, numCol) {
+    let cell = document.createElement('th');
+    cell.innerText = 'Поле ' + numCol;
+    cell.classList.add('table-main-content__cell');
+    cell.classList.add('table-main-content__cell_header');
+    cell.id = 'header_' + numCol;
+
+    return cell;
+}
+
+function createCell(config, numStr, numCol) {
+    let cell = document.createElement('td');
+    cell.innerText = config.array.data[numStr].facts['Fact_' + numCol];
+    cell.classList.add('table-main-content__cell');
+    cell.id = 'cell_'+ numStr + '-' + numCol;
+
+    return cell;
+}
+
 function scrollTableDown(config) {
     document.getElementById('tableRow_' + String(config.shiftY)).remove();
 
+    document.getElementById('tableRow_last').before(createRow(config, config.strEnd + config.shiftY));
     config.shiftY++;
-    let row = createRow(config, config.strEnd + config.shiftY - 1);
-    document.getElementById('tableRow_last').before(row);
 
     return config;
 }
@@ -261,9 +270,42 @@ function scrollTableDown(config) {
 function scrollTableUp(config) {
     document.getElementById('tableRow_' + String(config.strEnd + config.shiftY - 1)).remove();
 
+    document.getElementById('tableRow_first').after(createRow(config, config.strStart + config.shiftY - 1));
     config.shiftY--;
-    let row = createRow(config, config.shiftY);
-    document.getElementById('tableRow_first').after(row);
+
+    return config;
+}
+
+function scrollTableRight(config) {
+    let colStart = config.colStart + config.shiftX;
+    let colEnd = config.colEnd + config.shiftX;
+
+    document.getElementById('header_' + (colStart)).remove();
+    document.getElementById('header_' + (colEnd)).after(createHeaderCell(config, colEnd + 1));
+
+    for (let i = config.strStart + config.shiftY; i < config.strEnd + config.shiftY; i++) {
+        document.getElementById('cell_'+ i + '-' + colStart).remove();
+        document.getElementById('cell_'+ i + '-' + colEnd).after(createCell(config, i, colEnd +  1));
+    }
+
+    config.shiftX++;
+
+    return config;
+}
+
+function scrollTableLeft(config) {
+    let colStart = config.colStart + config.shiftX;
+    let colEnd = config.colEnd + config.shiftX;
+
+    document.getElementById('header_' + (colEnd)).remove();
+    document.getElementById('header_' + (colStart)).before(createHeaderCell(config, colStart - 1));
+
+    for (let i = config.strStart + config.shiftY; i < config.strEnd + config.shiftY; i++) {
+        document.getElementById('cell_'+ i + '-' + colEnd).remove();
+        document.getElementById('cell_'+ i + '-' + colStart).before(createCell(config, i, colStart - 1));
+    }
+
+    config.shiftX--;
 
     return config;
 }
