@@ -1,5 +1,5 @@
-function jsonGenerator () {
-    let str = 30;
+(function jsonGenerator () {
+    let str = 100;
     let col = 20;
 
     let names = ['Иван', 'Федор', 'Михаил', 'Алексей', 'Дмитрий', 'Пётр', 'Александр'];
@@ -28,7 +28,7 @@ function jsonGenerator () {
     }
 
     localStorage.setItem('data', JSON.stringify(table));
-};
+})();
 
 function randomIndex(min, max) {
     return Math.floor(Math.random() * (max - min) + min);

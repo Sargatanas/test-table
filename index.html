@@ -3,66 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="body">
 
-<main class="table">
-    <form class="table-header">
-        <button onclick="jsonGenerator()">
-            Сгенерировать базу данных
-        </button>
-
-        <br><br>
-
-        <label class="table-header-element__label"
-               for="v-size">
-            Отображать на странице по
-            <select class="table-header-element"
-                    id="v-size"
-                    name="v-size">
-                <option class="table-header-element__option"
-                        value="10"
-                        selected>
-                    10
-                </option>
-                <option class="table-header-element__option"
-                        value="15">
-                    15
-                </option>
-            </select>
-            записей
-        </label>
-
-        <label class="table-header-element__label"
-               for="h-size">
-            Отображать на странице по
-            <select class="table-header-element"
-                    id="h-size"
-                    name="h-size">
-                <option class="table-header-element__option"
-                        value="5"
-                        selected>
-                    5
-                </option>
-                <option class="table-header-element__option"
-                        value="10">
-                    10
-                </option>
-            </select>
-            колонок
-        </label>
-    </form>
-
-    <div class="table-main">
-        <table class="table-main-content"
-               id="table"></table>
-    </div>
+<main id="table-container">
+    <table id="table"
+           border="1"
+           cellspacing="0"></table>
 </main>
 
 
 <script type="text/javascript" src="js/jsonGenerator.js"></script>
-<script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript" src="js/virtualScroll.js"></script>
 </body>
 </html>
