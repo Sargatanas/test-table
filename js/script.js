@@ -104,6 +104,8 @@ function constructTable(config) {
     config['colStart'] = firstColumnNum;
     config['colEnd'] = lastColumnNum;
 
+    console.log(config);
+
     table.appendChild(constructTableHeader(config));
 
     table.appendChild(setButtonTop(config));
@@ -323,17 +325,24 @@ function createCell(config, numStr, numCol) {
 }
 
 function scrollTableDown(config) {
-    document.getElementById('tableRow_' + String(config.shiftY)).remove();
+    let table = document.getElementById('table');
+    let firstRow = table.childNodes[2];
+    let lastRow = table.lastChild;
 
-    document.getElementById('tableRow_last').before(createRow(config, config.strEnd + config.shiftY));
+    lastRow.before(createRow(config, config.height + config.shiftY));
+    firstRow.remove();
     config.shiftY++;
 
     return config;
 }
 
 function scrollTableUp(config) {
-    document.getElementById('tableRow_first').after(createRow(config, config.strStart + config.shiftY - 1));
-    document.getElementById('tableRow_' + String(config.strEnd + config.shiftY - 1)).remove();
+    let table = document.getElementById('table');
+    let firstRow = table.childNodes[1];
+    let lastRow = table.childNodes[table.childElementCount - 2];
+
+    firstRow.after(createRow(config, config.shiftY - 1));
+    lastRow.remove();
     config.shiftY--;
 
     return config;
