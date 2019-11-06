@@ -39,7 +39,6 @@ function getHeight(config) {
     let table = document.getElementById('table');
 
     let tableSize = document.documentElement.clientHeight - 100;
-    console.log(tableSize);
     let elementShifts = [];
     elementShifts[0] = table.childNodes[0].offsetHeight;
     for (let i = 1; i < table.childElementCount; i++) {
@@ -264,6 +263,7 @@ function constructTableBody(config) {
         let row = document.createElement('tr');
         row.classList.add('table-main-content__row');
         row.id = 'tableRow_' + String(i);
+        row.dataset.id = i;
 
         let cell = document.createElement('td');
         cell.innerText = config.array.data[i].name;
@@ -287,6 +287,7 @@ function createRow(config, num) {
     let row = document.createElement('tr');
     row.classList.add('table-main-content__row');
     row.id = 'tableRow_' + String(num);
+    row.dataset.id = num;
 
     let cell = document.createElement('td');
     cell.innerText = config.array.data[num].name;
@@ -295,8 +296,9 @@ function createRow(config, num) {
 
     row.appendChild(cell);
 
+    console.log(config);
 
-    for (let j = config.colStart + config.shiftX; j <= config.colEnd + config.shiftX; j++) {
+    for (let j = config.shiftX + 1; j < config.width + config.shiftX + 1; j++) {
        row.append(createCell(config, num, j));
     }
 
@@ -318,37 +320,52 @@ function createCell(config, numStr, numCol) {
     cell.innerText = config.array.data[numStr].facts['Fact_' + numCol];
     cell.classList.add('table-main-content__cell');
     cell.id = 'cell_'+ numStr + '-' + numCol;
+    cell.dataset.id = numCol;
 
     return cell;
 }
 
 function scrollTableDown(config) {
-    document.getElementById('tableRow_' + String(config.shiftY)).remove();
+    let table = document.getElementById('table');
+    let firstRow = table.childNodes[2];
+    let lastRow = table.lastChild;
 
-    document.getElementById('tableRow_last').before(createRow(config, config.strEnd + config.shiftY));
+    lastRow.before(createRow(config, config.height + config.shiftY));
+    firstRow.remove();
+
     config.shiftY++;
 
     return config;
 }
 
 function scrollTableUp(config) {
-    document.getElementById('tableRow_first').after(createRow(config, config.strStart + config.shiftY - 1));
-    document.getElementById('tableRow_' + String(config.strEnd + config.shiftY - 1)).remove();
+    let table = document.getElementById('table');
+    let firstRow = table.childNodes[2];
+    let lastRow = table.childNodes[table.childElementCount - 2];
+
+    firstRow.before(createRow(config, firstRow.dataset.id - 1));
+    lastRow.remove();
+
     config.shiftY--;
 
     return config;
 }
 
 function scrollTableRight(config) {
-    let colStart = config.colStart + config.shiftX;
-    let colEnd = config.colEnd + config.shiftX;
+    let colEnd = config.width + config.shiftX;
 
-    document.getElementById('header_' + (colStart)).remove();
-    document.getElementById('header_' + (colEnd)).after(createHeaderCell(config, colEnd + 1));
+    let table = document.getElementById('table');
+    let firstRow = table.firstChild;
+    firstRow.lastChild.before(createHeaderCell(config, colEnd + 1));
+    firstRow.childNodes[2].remove();
 
-    for (let i = config.strStart + config.shiftY; i < config.strEnd + config.shiftY; i++) {
-        document.getElementById('cell_'+ i + '-' + colEnd).after(createCell(config, i, colEnd +  1));
-        document.getElementById('cell_'+ i + '-' + colStart).remove();
+    for (let i = 0; i < config.height; i++) {
+        let row = table.childNodes[i + 2];
+        let firstCell = row.childNodes[1];
+        let lastCell = row.lastChild;
+
+        lastCell.after(createCell(config, Number(row.dataset.id), colEnd + 1));
+        firstCell.remove();
     }
 
     config.shiftX++;
@@ -357,15 +374,20 @@ function scrollTableRight(config) {
 }
 
 function scrollTableLeft(config) {
-    let colStart = config.colStart + config.shiftX;
-    let colEnd = config.colEnd + config.shiftX;
+    let colStart = config.shiftX;
 
-    document.getElementById('header_' + (colEnd)).remove();
-    document.getElementById('header_' + (colStart)).before(createHeaderCell(config, colStart - 1));
+    let table = document.getElementById('table');
+    let firstRow = table.firstChild;
+    firstRow.childNodes[2].before(createHeaderCell(config, colStart));
+    firstRow.childNodes[firstRow.childElementCount - 2].remove();
 
-    for (let i = config.strStart + config.shiftY; i < config.strEnd + config.shiftY; i++) {
-        document.getElementById('cell_'+ i + '-' + colEnd).remove();
-        document.getElementById('cell_'+ i + '-' + colStart).before(createCell(config, i, colStart - 1));
+    for (let i = 0; i < config.height; i++) {
+        let row = table.childNodes[i + 2];
+        let firstCell = row.childNodes[1];
+        let lastCell = row.lastChild;
+
+        firstCell.before(createCell(config, Number(row.dataset.id), colStart));
+        lastCell.remove();
     }
 
     config.shiftX--;
