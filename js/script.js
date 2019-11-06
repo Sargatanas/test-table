@@ -296,8 +296,6 @@ function createRow(config, num) {
 
     row.appendChild(cell);
 
-    console.log(config);
-
     for (let j = config.shiftX + 1; j < config.width + config.shiftX + 1; j++) {
        row.append(createCell(config, num, j));
     }
