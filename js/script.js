@@ -2,27 +2,87 @@
     // Начальные данные
     let config = {
         array: JSON.parse(localStorage.getItem('data')),
-        width: Number(document.getElementById('h-size').value),
-        height: Number(document.getElementById('v-size').value),
+        width: 5,
+        height: 10,
         shiftX: 0,
         shiftY: 0
     };
 
     // Первичный вывод таблицы
+    config = getSizes(config);
     constructTable(config);
 
-    // Обновление таблицы
-    document.getElementById('v-size').addEventListener('change', function () {
-        config.height = Number(document.getElementById('v-size').value);
+    window.onresize = function() {
+        config = getSizes(config);
         constructTable(config);
-    });
-
-    document.getElementById('h-size').addEventListener('change', function () {
-        config.width = Number(document.getElementById('h-size').value);
-        config.shiftX = 0;
-        constructTable(config);
-    });
+    };
 })();
+
+// Габариты таблицы
+function getSizes(config) {
+    config.height = config.array.countStr;
+    config.width = config.array.countCol;
+    constructTable(config);
+
+    config = getWidth(config);
+    config = getHeight(config);
+
+    let table = document.getElementById('table');
+    table.innerHTML = '';
+
+    return config;
+}
+
+// Расчет высоты таблицы
+function getHeight(config) {
+
+    let table = document.getElementById('table');
+
+    let tableSize = document.body.clientHeight - 40;
+    let elementShifts = [];
+    elementShifts[0] = table.childNodes[0].offsetHeight;
+    for (let i = 1; i < table.childElementCount; i++) {
+        elementShifts[i] = elementShifts[i - 1] + table.childNodes[i].offsetHeight;
+    }
+
+    config.height = 0;
+    for (let i = 0; i < elementShifts.length; i++) {
+        if (elementShifts[i] < tableSize) {
+            config.height = i;
+        } else
+            break;
+    }
+    config.height--;
+
+    return config;
+}
+
+// Расчет ширины таблицы
+function getWidth(config) {
+    config.height = config.array.countCol;
+
+    let table = document.getElementById('table');
+
+    let row = table.childNodes[3];
+
+    let tableSize = document.body.clientWidth - 80;
+    let elementShifts = [];
+    elementShifts[0] = Number(row.childNodes[0].dataset.width);
+    for (let i = 1; i < row.childElementCount; i++) {
+        elementShifts[i] = elementShifts[i - 1] + 100;
+    }
+
+    config.width = 0;
+    for (let i = 0; i < elementShifts.length; i++) {
+        if (elementShifts[i] < tableSize) {
+            config.width = i;
+        } else
+            break;
+    }
+    config.width = Math.max(config.width, 2);
+
+    return config;
+}
 
 // Отрисовка таблицы
 function constructTable(config) {
@@ -103,6 +163,7 @@ function setButtonLeft(config) {
             config = scrollTableLeft(config);
         }
     });
+
     cell.appendChild(cellButton);
 
     return cell;
@@ -167,10 +228,10 @@ function setButtonBottom(config) {
     let row = document.createElement('tr');
     row.id = 'tableRow_last';
 
-    let cell = document.createElement('td');
-    row.appendChild(cell);
+    row.appendChild(document.createElement('td'));
+    row.appendChild(document.createElement('td'));
 
-    cell = document.createElement('td');
+    let cell = document.createElement('td');
     cell.colSpan = config.width + 3;
     cell.classList.add('table-main-content__cell');
     cell.classList.add('table-main-content__cell_button');
@@ -184,6 +245,7 @@ function setButtonBottom(config) {
             config = scrollTableDown(config);
         }
     });
+
     cell.appendChild(cellButton);
     row.appendChild(cell);
 
@@ -206,6 +268,7 @@ function constructTableBody(config) {
         cell.innerText = config.array.data[i].name;
         cell.classList.add('table-main-content__cell');
         cell.classList.add('table-main-content__cell_name');
+        cell.dataset.width = '100';
 
         row.appendChild(cell);
 
@@ -268,9 +331,8 @@ function scrollTableDown(config) {
 }
 
 function scrollTableUp(config) {
-    document.getElementById('tableRow_' + String(config.strEnd + config.shiftY - 1)).remove();
-
     document.getElementById('tableRow_first').after(createRow(config, config.strStart + config.shiftY - 1));
+    document.getElementById('tableRow_' + String(config.strEnd + config.shiftY - 1)).remove();
     config.shiftY--;
 
     return config;
@@ -284,8 +346,8 @@ function scrollTableRight(config) {
     document.getElementById('header_' + (colEnd)).after(createHeaderCell(config, colEnd + 1));
 
     for (let i = config.strStart + config.shiftY; i < config.strEnd + config.shiftY; i++) {
-        document.getElementById('cell_'+ i + '-' + colStart).remove();
         document.getElementById('cell_'+ i + '-' + colEnd).after(createCell(config, i, colEnd +  1));
+        document.getElementById('cell_'+ i + '-' + colStart).remove();
     }
 
     config.shiftX++;

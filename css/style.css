@@ -1,4 +1,6 @@
 body {
+    height: 100vh;
+    width: 100vw;
     margin: 0;
     padding: 0;
 }
@@ -8,6 +10,9 @@ button:active, button:focus {
 button::-moz-focus-inner {
     border: 0;
 }
+th, td {
+    box-sizing: border-box;
+}
 
 
 .table {
@@ -15,21 +20,6 @@ button::-moz-focus-inner {
     font-family: Arial, serif;
     font-size: 0.8em;
 }
-
-.table-header {
-    box-sizing: border-box;
-    padding: 20px;
-    background: rgb(236, 236, 236);
-}
-
-.table-header-element__label {
-    display: block;
-    margin-bottom: 10px;
-}
-.table-header-element__label:last-child {
-    margin-bottom: 0;
-}
-
 
 /*Main*/
 
@@ -113,6 +103,7 @@ button::-moz-focus-inner {
 
     transition-property: background;
     transition-duration: 0.3s;
+    cursor: pointer;
 }
 .table-main-content__button:hover {
     background-color: rgba(185, 108, 4, 0.1);
@@ -143,22 +134,51 @@ button::-moz-focus-inner {
     background-image: url('../resources/img/double-bottom.png');
 }
 
+@media screen and (max-width: 1024px) {
+    .table {
+        font-size: 0.6em;
+    }
+    .table-main {
+        margin: 5px;
+        padding: 0;
 
-/*Footer*/
+        border-radius: 2px;
+    }
+    .table-main-content__cell {
+        height: 15px;
+        padding: 2px 2px 2px 5px;
+    }
+    .table-main-content__cell:last-child {
+        border-radius: 0;
+    }
+    .table-main-content__cell_header {
+        border-radius: 0;
+    }
+    .table-main-content__cell_header:nth-child(2n + 1) {
+        background: #ffeac2;
+    }
+    .table-main-content__cell_name {
+        width: 100px;
+        padding-right: 5px;
+        border-radius: 0;
+    }
+    .table-main-content__cell_name.table-main-content__cell_header {
+        border-radius: 0;
+    }
 
-.table-footer {
-    width: 100%;
-    box-sizing: border-box;
 
-    padding: 20px;
-
-    background: rgb(236, 236, 236);
-}
-
-.table-header-element__label {
-    display: block;
-    margin-bottom: 10px;
-}
-.table-header-element__label:last-child {
-    margin-bottom: 0;
+    .table-main-content__button {
+        border-radius: 2px;
+    }
+    .table-main-content__button_left,
+    .table-main-content__button_right {
+        width: 20px;
+        height: 100px;
+        background-size: 60% auto;
+    }
+    .table-main-content__button_top,
+    .table-main-content__button_bottom {
+        width: 100px;
+        height: 20px;
+    }
 }
