@@ -38,7 +38,8 @@ function getHeight(config) {
 
     let table = document.getElementById('table');
 
-    let tableSize = document.body.clientHeight - 40;
+    let tableSize = document.documentElement.clientHeight - 100;
+    console.log(tableSize);
     let elementShifts = [];
     elementShifts[0] = table.childNodes[0].offsetHeight;
     for (let i = 1; i < table.childElementCount; i++) {
@@ -65,7 +66,7 @@ function getWidth(config) {
 
     let row = table.childNodes[3];
 
-    let tableSize = document.body.clientWidth - 80;
+    let tableSize = document.documentElement.clientWidth - 80;
     let elementShifts = [];
     elementShifts[0] = Number(row.childNodes[0].dataset.width);
     for (let i = 1; i < row.childElementCount; i++) {
