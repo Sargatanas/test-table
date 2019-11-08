@@ -6,13 +6,15 @@
     let data = await loadJson();
     data = JSON.parse(data);
 
+    console.log('Data completed');
+
     loadTable(data);
 })();
 
 async function loadJson() {
     let promise = new Promise((resolve, reject) => {
         let request = new XMLHttpRequest();
-        request.open('GET', './resources/json/data.json');
+        request.open('GET', 'https://cloud.mail.ru/public/eLQj/24G4edccU');
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.send();
@@ -327,7 +329,7 @@ function createRow(config, num) {
     row.appendChild(cell);
 
     for (let j = config.shiftX + 1; j < config.width + config.shiftX + 1; j++) {
-       row.append(createCell(config, num, j));
+        row.append(createCell(config, num, j));
     }
 
     return row;
@@ -449,13 +451,19 @@ function activateRow(config, row) {
         config.selectedRows.forEach(function (element) {
             array.push(Number(element));
         });
-        array.sort(function (a, b) {
-            return a - b;
-        });
-        for(let i = 0; i < array.length - 1; i++) {
-            comment += String(array[i] + 1) + ', ';
+
+        if (array.length > 0) {
+            array.sort(function (a, b) {
+                return a - b;
+            });
+            for(let i = 0; i < array.length - 1; i++) {
+                comment += String(array[i] + 1) + ', ';
+            }
+            comment += String(array[array.length - 1] + 1);
+        } else {
+            comment += 'не выбрано';
         }
-        comment += String(array[array.length - 1] + 1);
+
         console.log(comment);
     });
 
