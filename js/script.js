@@ -1,12 +1,50 @@
-(function loadTable() {
+(async function () {
+    let table = document.getElementById('table');
+    table.innerHTML = '';
+    table.append(setPreloader());
+
+    let data = await loadJson();
+    data = JSON.parse(data);
+
+    console.log('Data completed');
+
+    loadTable(data);
+})();
+
+async function loadJson() {
+    let promise = new Promise((resolve, reject) => {
+        let request = new XMLHttpRequest();
+        request.open('GET', 'https://cloud.mail.ru/public/eLQj/24G4edccU');
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.send();
+
+        request.onreadystatechange = function() {
+            if (request.readyState !== 4) return;
+
+            if (request.status === 200) {
+                resolve(request.response);
+            } else {
+                reject('error');
+            }
+        };
+
+    });
+
+    return await promise;
+}
+
+function loadTable(json) {
+
     // Начальные данные
     let config = {
-        array: JSON.parse(localStorage.getItem('data')),
+        array: json,
         width: 5,
         height: 10,
         shiftX: 0,
         shiftY: 0
     };
+    config['selectedRows'] = new Set();
 
     // Первичный вывод таблицы
     config = getSizes(config);
@@ -16,14 +54,10 @@
         config = getSizes(config);
         constructTable(config);
     };
-})();
+}
 
 // Габариты таблицы
 function getSizes(config) {
-    config.height = config.array.countStr;
-    config.width = config.array.countCol;
-    constructTable(config);
-
     config = getWidth(config);
     config = getHeight(config);
 
@@ -35,22 +69,33 @@ function getSizes(config) {
 
 // Расчет высоты таблицы
 function getHeight(config) {
-
     let table = document.getElementById('table');
+    table.innerHTML = '';
 
-    let tableSize = document.documentElement.clientHeight - 100;
-    let elementShifts = [];
-    elementShifts[0] = table.childNodes[0].offsetHeight;
-    for (let i = 1; i < table.childElementCount; i++) {
-        elementShifts[i] = elementShifts[i - 1] + table.childNodes[i].offsetHeight;
-    }
+    let screenSize = window.innerHeight - 80;
 
     config.height = 0;
-    for (let i = 0; i < elementShifts.length; i++) {
-        if (elementShifts[i] < tableSize) {
-            config.height = i;
-        } else
-            break;
+
+    let previousElementShift = 0;
+    let currentElementShift;
+    let copyConfig = Object.create(config);
+    copyConfig.width = config.array.countCol;
+
+    if (previousElementShift < screenSize) {
+        for (let i = config.shiftY; i < config.array.countStr + config.shiftY; i++) {
+            let row = createRow(copyConfig, i);
+            table.append(row);
+
+            currentElementShift = previousElementShift + row.offsetHeight;
+
+            if (currentElementShift < screenSize) {
+                config.height++;
+            } else
+                break;
+
+            row.remove();
+            previousElementShift = currentElementShift;
+        }
     }
     config.height--;
 
@@ -59,27 +104,12 @@ function getHeight(config) {
 
 // Расчет ширины таблицы
 function getWidth(config) {
-    config.height = config.array.countCol;
+    let screenSize = window.innerWidth - 50;
 
-    let table = document.getElementById('table');
+    let maxWidth = screenSize > 1024 ? 100 : 80;
+    screenSize -= 300;
 
-    let row = table.childNodes[3];
-
-    let tableSize = document.documentElement.clientWidth - 80;
-    let elementShifts = [];
-    elementShifts[0] = Number(row.childNodes[0].dataset.width);
-    for (let i = 1; i < row.childElementCount; i++) {
-        elementShifts[i] = elementShifts[i - 1] + 100;
-    }
-
-    config.width = 0;
-    for (let i = 0; i < elementShifts.length; i++) {
-        if (elementShifts[i] < tableSize) {
-            config.width = i;
-        } else
-            break;
-    }
-    config.width = Math.max(config.width, 2);
+    config.width = Math.max(Math.floor(screenSize / maxWidth), 2);
 
     return config;
 }
@@ -277,6 +307,8 @@ function constructTableBody(config) {
             row.append(createCell(config, i, j));
         }
 
+        row = activateRow(config, row);
+
         body.push(row);
     }
 
@@ -296,10 +328,8 @@ function createRow(config, num) {
 
     row.appendChild(cell);
 
-    console.log(config);
-
     for (let j = config.shiftX + 1; j < config.width + config.shiftX + 1; j++) {
-       row.append(createCell(config, num, j));
+        row.append(createCell(config, num, j));
     }
 
     return row;
@@ -330,7 +360,9 @@ function scrollTableDown(config) {
     let firstRow = table.childNodes[2];
     let lastRow = table.lastChild;
 
-    lastRow.before(createRow(config, config.height + config.shiftY));
+    let row = createRow(config, config.height + config.shiftY);
+    row = activateRow(config, row);
+    lastRow.before(row);
     firstRow.remove();
 
     config.shiftY++;
@@ -343,7 +375,9 @@ function scrollTableUp(config) {
     let firstRow = table.childNodes[2];
     let lastRow = table.childNodes[table.childElementCount - 2];
 
-    firstRow.before(createRow(config, firstRow.dataset.id - 1));
+    let row = createRow(config, firstRow.dataset.id - 1);
+    row = activateRow(config, row);
+    firstRow.before(row);
     lastRow.remove();
 
     config.shiftY--;
@@ -393,4 +427,51 @@ function scrollTableLeft(config) {
     config.shiftX--;
 
     return config;
+}
+
+function activateRow(config, row) {
+    let rowId = row.dataset.id;
+
+    if (config.selectedRows.has(rowId)) {
+        row.classList.add('table-main-content__row_selected');
+    }
+
+    row.addEventListener('click', function () {
+        if (config.selectedRows.has(rowId)) {
+            config.selectedRows.delete(rowId);
+            row.classList.remove('table-main-content__row_selected');
+        } else {
+            config.selectedRows.add(rowId);
+            row.classList.add('table-main-content__row_selected');
+        }
+
+        // Вывод в консоль выдранных строк
+        let comment = 'Выбранные строки: ';
+        let array = [];
+        config.selectedRows.forEach(function (element) {
+            array.push(Number(element));
+        });
+
+        if (array.length > 0) {
+            array.sort(function (a, b) {
+                return a - b;
+            });
+            for(let i = 0; i < array.length - 1; i++) {
+                comment += String(array[i] + 1) + ', ';
+            }
+            comment += String(array[array.length - 1] + 1);
+        } else {
+            comment += 'не выбрано';
+        }
+
+        console.log(comment);
+    });
+
+    return row;
+}
+
+function setPreloader() {
+    let preloader = document.createElement('div');
+    preloader.classList.add('preloader');
+    return preloader;
 }
