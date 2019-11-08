@@ -4,7 +4,7 @@ set_time_limit(0);
 $url = $_SERVER['DOCUMENT_ROOT'] . '/resources/json/data.json';
 $file = fopen($url, 'a');
 
-$str = 10000;
+$str = 1000;
 $col = 1000;
 
 $names = ['Иван', 'Федор', 'Михаил', 'Алексей', 'Дмитрий', 'Пётр', 'Александр'];

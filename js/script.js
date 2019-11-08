@@ -14,8 +14,9 @@
 async function loadJson() {
     let promise = new Promise((resolve, reject) => {
         let request = new XMLHttpRequest();
-        request.open('GET', 'https://api.teletypeapp.com/data.json');
+        request.open('GET', './resources/json/data.json');
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.withCredentials = true;
         request.send();
 
         request.onreadystatechange = function() {
