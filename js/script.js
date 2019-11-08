@@ -14,7 +14,7 @@
 async function loadJson() {
     let promise = new Promise((resolve, reject) => {
         let request = new XMLHttpRequest();
-        request.open('GET', 'https://cloud.mail.ru/public/eLQj/24G4edccU');
+        request.open('GET', 'https://www.dropbox.com/s/8tjiscgfzeyilhc/data.json?dl=0');
         request.setRequestHeader('Access-Control-Allow-Origin', 'cloud.mail.ru');
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.send();
